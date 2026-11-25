@@ -52,30 +52,57 @@ class HealthController extends ChangeNotifier {
   int get todayWaterMl =>
       _todayRecords.fold(0, (sum, item) => sum + item.waterMl);
 
-  // Form validation helper (returns error message if invalid, or null if valid)
+  // Upper limits that catch typing mistakes (e.g. an extra zero) while still allowing very active days.
+  static const int maxSteps = 100000;
+  static const int maxCalories = 10000;
+  static const int maxWaterMl = 10000;
+
+  // Form validation helper (returns error message if invalid, or null if valid).
   String? validateRecordInput({
     required String date,
     required String stepsText,
     required String caloriesText,
     required String waterText,
+    DateTime? today,
   }) {
-    if (date.trim().isEmpty) {
+    final trimmedDate = date.trim();
+    if (trimmedDate.isEmpty) {
       return 'Please select a date.';
+    }
+
+    final parsedDate = DateTime.tryParse(trimmedDate);
+    if (parsedDate == null || formatDate(parsedDate) != trimmedDate) {
+      return 'Date must be in YYYY-MM-DD format.';
+    }
+
+    final now = today ?? DateTime.now();
+    final todayOnly = DateTime(now.year, now.month, now.day);
+    if (parsedDate.isAfter(todayOnly)) {
+      return 'You cannot add a record for a future date.';
     }
 
     final steps = int.tryParse(stepsText.trim());
     if (steps == null || steps < 0) {
       return 'Steps must be a valid non-negative number.';
     }
+    if (steps > maxSteps) {
+      return 'Steps cannot be more than $maxSteps per record.';
+    }
 
     final calories = int.tryParse(caloriesText.trim());
     if (calories == null || calories < 0) {
       return 'Calories must be a valid non-negative number.';
     }
+    if (calories > maxCalories) {
+      return 'Calories cannot be more than $maxCalories kcal per record.';
+    }
 
     final water = int.tryParse(waterText.trim());
     if (water == null || water < 0) {
       return 'Water intake (ml) must be a valid non-negative number.';
+    }
+    if (water > maxWaterMl) {
+      return 'Water intake cannot be more than $maxWaterMl ml per record.';
     }
 
     if (steps == 0 && calories == 0 && water == 0) {

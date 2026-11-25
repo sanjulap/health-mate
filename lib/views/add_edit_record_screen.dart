@@ -54,14 +54,17 @@ class _AddEditRecordScreenState extends State<AddEditRecordScreen> {
   }
 
   Future<void> _pickDate() async {
-    final initialDate =
-        DateTime.tryParse(_dateController.text.trim()) ?? DateTime.now();
+    // Records cannot be logged for future days, so today is the last selectable date.
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final parsed = DateTime.tryParse(_dateController.text.trim()) ?? today;
+    final initialDate = parsed.isAfter(today) ? today : parsed;
 
     final picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
       firstDate: DateTime(2020, 1, 1),
-      lastDate: DateTime(2100, 12, 31),
+      lastDate: today,
     );
 
     if (picked != null) {

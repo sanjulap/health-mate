@@ -13,15 +13,17 @@ class RecordListScreen extends StatelessWidget {
     BuildContext context,
     HealthController controller,
   ) async {
-    final initial =
-        DateTime.tryParse(controller.selectedDateFilter ?? '') ??
-        DateTime.now();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final parsed =
+        DateTime.tryParse(controller.selectedDateFilter ?? '') ?? today;
+    final initial = parsed.isAfter(today) ? today : parsed;
 
     final picked = await showDatePicker(
       context: context,
       initialDate: initial,
       firstDate: DateTime(2020, 1, 1),
-      lastDate: DateTime(2100, 12, 31),
+      lastDate: today,
     );
 
     if (picked != null) {
