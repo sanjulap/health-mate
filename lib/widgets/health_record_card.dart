@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/health_record.dart';
+import '../utils/formatters.dart';
 
 class HealthRecordCard extends StatelessWidget {
   final HealthRecord record;
@@ -13,18 +14,6 @@ class HealthRecordCard extends StatelessWidget {
     required this.onEdit,
     required this.onDelete,
   });
-
-  String _formatNumber(int value) {
-    final str = value.toString();
-    final buffer = StringBuffer();
-    for (int i = 0; i < str.length; i++) {
-      if (i > 0 && (str.length - i) % 3 == 0) {
-        buffer.write(',');
-      }
-      buffer.write(str[i]);
-    }
-    return buffer.toString();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +41,7 @@ class HealthRecordCard extends StatelessWidget {
               const Icon(Icons.event, size: 18, color: Colors.teal),
               const SizedBox(width: 8),
               Text(
-                record.date,
+                AppFormatters.cardDate(record.date),
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -82,21 +71,21 @@ class HealthRecordCard extends StatelessWidget {
             icon: Icons.directions_walk,
             color: const Color(0xFF7B61FF),
             label: 'Steps',
-            value: '${_formatNumber(record.steps)} steps',
+            value: '${AppFormatters.number(record.steps)} steps',
           ),
           const SizedBox(height: 10),
           _RecordMetricRow(
             icon: Icons.local_fire_department,
             color: const Color(0xFFE5484D),
             label: 'Calories Burned',
-            value: '${_formatNumber(record.calories)} kcal',
+            value: '${AppFormatters.number(record.calories)} kcal',
           ),
           const SizedBox(height: 10),
           _RecordMetricRow(
             icon: Icons.water_drop,
             color: const Color(0xFF1D7AFC),
             label: 'Water Intake',
-            value: '${_formatNumber(record.waterMl)} ml',
+            value: '${AppFormatters.number(record.waterMl)} ml',
           ),
         ],
       ),

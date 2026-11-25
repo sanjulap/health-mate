@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../controllers/health_controller.dart';
 import '../models/health_record.dart';
+import '../utils/formatters.dart';
 
 class AddEditRecordScreen extends StatefulWidget {
   final HealthRecord? record;
@@ -18,6 +19,8 @@ class AddEditRecordScreen extends StatefulWidget {
 
 class _AddEditRecordScreenState extends State<AddEditRecordScreen> {
   final _formKey = GlobalKey<FormState>();
+  // _selectedDate holds the 'YYYY-MM-DD' value that is saved
+  late String _selectedDate;
   late final TextEditingController _dateController;
   late final TextEditingController _stepsController;
   late final TextEditingController _caloriesController;
@@ -30,8 +33,10 @@ class _AddEditRecordScreenState extends State<AddEditRecordScreen> {
   void initState() {
     super.initState();
     final existing = widget.record;
+    _selectedDate =
+        existing?.date ?? HealthController.formatDate(DateTime.now());
     _dateController = TextEditingController(
-      text: existing?.date ?? HealthController.formatDate(DateTime.now()),
+      text: AppFormatters.longDate(_selectedDate),
     );
     _stepsController = TextEditingController(
       text: existing != null ? existing.steps.toString() : '',
@@ -57,7 +62,7 @@ class _AddEditRecordScreenState extends State<AddEditRecordScreen> {
     // Records cannot be logged for future days, so today is the last selectable date.
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final parsed = DateTime.tryParse(_dateController.text.trim()) ?? today;
+    final parsed = DateTime.tryParse(_selectedDate) ?? today;
     final initialDate = parsed.isAfter(today) ? today : parsed;
 
     final picked = await showDatePicker(
@@ -69,7 +74,8 @@ class _AddEditRecordScreenState extends State<AddEditRecordScreen> {
 
     if (picked != null) {
       setState(() {
-        _dateController.text = HealthController.formatDate(picked);
+        _selectedDate = HealthController.formatDate(picked);
+        _dateController.text = AppFormatters.longDate(_selectedDate);
         _validationError = null;
       });
     }
@@ -79,7 +85,7 @@ class _AddEditRecordScreenState extends State<AddEditRecordScreen> {
     final controller = context.read<HealthController>();
 
     final error = controller.validateRecordInput(
-      date: _dateController.text,
+      date: _selectedDate,
       stepsText: _stepsController.text,
       caloriesText: _caloriesController.text,
       waterText: _waterController.text,
@@ -100,7 +106,7 @@ class _AddEditRecordScreenState extends State<AddEditRecordScreen> {
     final steps = int.parse(_stepsController.text.trim());
     final calories = int.parse(_caloriesController.text.trim());
     final waterMl = int.parse(_waterController.text.trim());
-    final date = _dateController.text.trim();
+    final date = _selectedDate;
 
     bool success;
     if (widget.isEditing) {
@@ -175,7 +181,7 @@ class _AddEditRecordScreenState extends State<AddEditRecordScreen> {
                   readOnly: true,
                   onTap: _pickDate,
                   decoration: InputDecoration(
-                    hintText: 'YYYY-MM-DD',
+                    hintText: 'Select a date',
                     suffixIcon: const Icon(Icons.calendar_today),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../models/health_record.dart';
 import '../repositories/health_repository.dart';
 import '../models/goal_settings.dart';
+import '../utils/formatters.dart';
 
 class HealthController extends ChangeNotifier {
   final HealthRepository _repository;
@@ -30,13 +31,8 @@ class HealthController extends ChangeNotifier {
         .toList();
   }
 
-  // Helper to format DateTime consistently as 'YYYY-MM-DD'
-  static String formatDate(DateTime date) {
-    final y = date.year.toString().padLeft(4, '0');
-    final m = date.month.toString().padLeft(2, '0');
-    final d = date.day.toString().padLeft(2, '0');
-    return '$y-$m-$d';
-  }
+  // Formats a DateTime as 'YYYY-MM-DD', the format stored in the database
+  static String formatDate(DateTime date) => AppFormatters.storageDate(date);
 
   String get todayDateString => formatDate(DateTime.now());
 

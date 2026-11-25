@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../controllers/health_controller.dart';
 import '../models/health_record.dart';
+import '../utils/formatters.dart';
 import '../widgets/health_record_card.dart';
 import 'add_edit_record_screen.dart';
 
@@ -56,7 +57,9 @@ class RecordListScreen extends StatelessWidget {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Delete Record'),
-        content: Text('Delete the health record for ${record.date}?'),
+        content: Text(
+          'Delete the health record for ${AppFormatters.longDate(record.date)}?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -116,7 +119,7 @@ class RecordListScreen extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 activeFilter != null
-                    ? 'Showing records for $activeFilter'
+                    ? 'Showing records for ${AppFormatters.longDate(activeFilter)}'
                     : 'All logged daily activities (${records.length})',
                 style: Theme.of(context).textTheme.bodyMedium
                     ?.copyWith(color: Colors.grey[600]),
@@ -137,7 +140,7 @@ class RecordListScreen extends StatelessWidget {
                     avatar: const Icon(Icons.date_range, size: 18),
                     label: Text(
                       activeFilter != null
-                          ? 'Date: $activeFilter'
+                          ? 'Date: ${AppFormatters.shortDate(activeFilter)}'
                           : 'Filter by Date',
                     ),
                     onPressed: () => _pickFilterDate(context, controller),
@@ -169,7 +172,7 @@ class RecordListScreen extends StatelessWidget {
                             const SizedBox(height: 10),
                             Text(
                               activeFilter != null
-                                  ? 'No records found for $activeFilter.'
+                                  ? 'No records found for ${AppFormatters.longDate(activeFilter)}.'
                                   : 'No health records yet.',
                               style: TextStyle(
                                 fontSize: 15,
