@@ -1,4 +1,4 @@
-package com.example.health_mate
+package com.sanjula.healthmate
 
 import io.flutter.embedding.android.FlutterActivity
 

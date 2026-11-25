@@ -2,11 +2,21 @@ import 'package:flutter/material.dart';
 
 class StepsGradientCard extends StatelessWidget {
   final String stepsText;
+  final String goalText;
+  final double progress;
 
-  const StepsGradientCard({super.key, required this.stepsText});
+  const StepsGradientCard({
+    super.key,
+    required this.stepsText,
+    required this.goalText,
+    required this.progress,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final clamped = progress.clamp(0.0, 1.0);
+    final percent = (clamped * 100).round();
+
     return Container(
       constraints: const BoxConstraints(minHeight: 145),
       decoration: BoxDecoration(
@@ -29,7 +39,6 @@ class StepsGradientCard extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              flex: 3,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -54,7 +63,7 @@ class StepsGradientCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Total steps walked',
+                    'Goal: $goalText steps',
                     style: TextStyle(
                       color: Colors.white.withValues(alpha: 0.9),
                       fontSize: 13,
@@ -63,26 +72,41 @@ class StepsGradientCard extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              flex: 2,
-              child: Container(
-                height: 105,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.18),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.35),
-                  ),
-                ),
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+            const SizedBox(width: 12),
+            Semantics(
+              label: '$percent percent of daily steps goal',
+              child: SizedBox(
+                width: 96,
+                height: 96,
+                child: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    Icon(Icons.directions_walk, color: Colors.white, size: 36),
-                    SizedBox(height: 4),
-                    Text(
-                      'Illustration',
-                      style: TextStyle(color: Colors.white, fontSize: 11),
+                    CircularProgressIndicator(
+                      value: clamped,
+                      strokeWidth: 8,
+                      strokeCap: StrokeCap.round,
+                      backgroundColor: Colors.white.withValues(alpha: 0.25),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        Colors.white,
+                      ),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.directions_walk,
+                          color: Colors.white,
+                          size: 26,
+                        ),
+                        Text(
+                          '$percent%',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

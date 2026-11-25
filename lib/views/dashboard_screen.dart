@@ -48,6 +48,8 @@ class DashboardScreen extends StatelessWidget {
                 // 1. STEPS CARD
                 StepsGradientCard(
                   stepsText: AppFormatters.number(controller.todaySteps),
+                  goalText: AppFormatters.number(controller.goals.stepsGoal),
+                  progress: controller.stepsProgress,
                 ),
                 const SizedBox(height: 14),
 
