@@ -40,14 +40,16 @@ class HealthRecordCard extends StatelessWidget {
             children: [
               const Icon(Icons.event, size: 18, color: Colors.teal),
               const SizedBox(width: 8),
-              Text(
-                AppFormatters.cardDate(record.date),
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              Expanded(
+                child: Text(
+                  AppFormatters.cardDate(record.date),
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-              const Spacer(),
               IconButton(
                 onPressed: onEdit,
                 icon: const Icon(Icons.edit_outlined, size: 20),
@@ -112,8 +114,14 @@ class _RecordMetricRow extends StatelessWidget {
       children: [
         Icon(icon, size: 20, color: color),
         const SizedBox(width: 10),
-        Text(label, style: TextStyle(fontSize: 14, color: Colors.grey[700])),
-        const Spacer(),
+        Expanded(
+          child: Text(
+            label,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+          ),
+        ),
+        const SizedBox(width: 8),
         Text(
           value,
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
