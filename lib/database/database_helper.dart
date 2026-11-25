@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -24,7 +25,7 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, _dbName);
 
-    print('DATABASE LOCATION: $path'); // check db path
+    if (kDebugMode) debugPrint('Database location: $path');
 
     return await openDatabase(path, version: _dbVersion, onCreate: _onCreate);
   }

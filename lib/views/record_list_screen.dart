@@ -102,7 +102,6 @@ class RecordListScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _openAddScreen(context),
         tooltip: 'Add record',
-        // Swap Icon(Icons.add) for a custom icon if desired
         child: const Icon(Icons.add),
       ),
       body: SafeArea(
