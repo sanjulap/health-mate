@@ -2,6 +2,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../models/health_record.dart';
+import '../utils/formatters.dart';
 
 class DatabaseHelper {
   DatabaseHelper._internal();
@@ -53,13 +54,7 @@ class DatabaseHelper {
 
   Future<void> _seedDummyRecords(Database db) async {
     final now = DateTime.now();
-
-    String formatDate(DateTime d) {
-      final y = d.year.toString().padLeft(4, '0');
-      final m = d.month.toString().padLeft(2, '0');
-      final day = d.day.toString().padLeft(2, '0');
-      return '$y-$m-$day';
-    }
+    const formatDate = AppFormatters.storageDate;
 
     final dummyRecords = [
       HealthRecord(

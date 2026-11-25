@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../controllers/health_controller.dart';
+import '../utils/formatters.dart';
 import 'main_navigation_screen.dart';
 import '../widgets/edit_goals_dialog.dart';
 import '../widgets/metric_summary_card.dart';
@@ -10,18 +11,6 @@ import '../widgets/streak_summary_card.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
-
-  String _formatNumber(int value) {
-    final str = value.toString();
-    final buffer = StringBuffer();
-    for (int i = 0; i < str.length; i++) {
-      if (i > 0 && (str.length - i) % 3 == 0) {
-        buffer.write(',');
-      }
-      buffer.write(str[i]);
-    }
-    return buffer.toString();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +33,7 @@ class DashboardScreen extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                'Today – ${controller.todayDateString}',
+                'Today – ${AppFormatters.longDate(controller.todayDateString)}',
                 style: Theme.of(context).textTheme.bodyMedium
                     ?.copyWith(color: Colors.grey[600]),
               ),
@@ -58,7 +47,7 @@ class DashboardScreen extends StatelessWidget {
               else ...[
                 // 1. STEPS CARD
                 StepsGradientCard(
-                  stepsText: _formatNumber(controller.todaySteps),
+                  stepsText: AppFormatters.number(controller.todaySteps),
                 ),
                 const SizedBox(height: 14),
 
@@ -68,7 +57,9 @@ class DashboardScreen extends StatelessWidget {
                     Expanded(
                       child: MetricSummaryCard(
                         title: 'Calories Burned',
-                        valueText: _formatNumber(controller.todayCalories),
+                        valueText: AppFormatters.number(
+                          controller.todayCalories,
+                        ),
                         unitText: 'kcal',
                         icon: Icons.local_fire_department,
                         accentColor: const Color(0xFFE5484D),
@@ -79,7 +70,9 @@ class DashboardScreen extends StatelessWidget {
                     Expanded(
                       child: MetricSummaryCard(
                         title: 'Water Intake',
-                        valueText: _formatNumber(controller.todayWaterMl),
+                        valueText: AppFormatters.number(
+                          controller.todayWaterMl,
+                        ),
                         unitText: 'ml',
                         icon: Icons.water_drop,
                         accentColor: const Color(0xFF1D7AFC),
