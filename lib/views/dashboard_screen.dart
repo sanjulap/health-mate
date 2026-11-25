@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../controllers/health_controller.dart';
 import 'main_navigation_screen.dart';
+import '../widgets/edit_goals_dialog.dart';
 import '../widgets/metric_summary_card.dart';
 import '../widgets/steps_gradient_card.dart';
 import '../widgets/streak_summary_card.dart';
@@ -96,7 +96,7 @@ class DashboardScreen extends StatelessWidget {
                   stepsProgress: controller.stepsProgress,
                   caloriesProgress: controller.caloriesProgress,
                   waterProgress: controller.waterProgress,
-                  onEditGoals: () => _showEditGoalsDialog(context, controller),
+                  onEditGoals: () => _showEditGoalsDialog(context),
                 ),
                 const SizedBox(height: 20),
                 // 4. PRIMARY ACTION BUTTONS
@@ -131,122 +131,10 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _showEditGoalsDialog(
-    BuildContext context,
-    HealthController controller,
-  ) async {
-    final stepsCtrl = TextEditingController(
-      text: controller.goals.stepsGoal.toString(),
-    );
-    final caloriesCtrl = TextEditingController(
-      text: controller.goals.caloriesGoal.toString(),
-    );
-    final waterCtrl = TextEditingController(
-      text: controller.goals.waterGoalMl.toString(),
-    );
-
-    String? dialogError;
-
-    await showDialog<void>(
+  Future<void> _showEditGoalsDialog(BuildContext context) {
+    return showDialog<void>(
       context: context,
-      builder: (dialogContext) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return AlertDialog(
-              title: const Text('Daily Health Goals'),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      controller: stepsCtrl,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      decoration: const InputDecoration(
-                        labelText: 'Daily Steps Goal',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: caloriesCtrl,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      decoration: const InputDecoration(
-                        labelText: 'Daily Calories Goal (kcal)',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: waterCtrl,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      decoration: const InputDecoration(
-                        labelText: 'Daily Water Goal (ml)',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    if (dialogError != null) ...[
-                      const SizedBox(height: 10),
-                      Text(
-                        dialogError!,
-                        style: const TextStyle(
-                          color: Color(0xFFE5484D),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(dialogContext).pop(),
-                  child: const Text('Cancel'),
-                ),
-                FilledButton(
-                  onPressed: () async {
-                    final s = int.tryParse(stepsCtrl.text.trim()) ?? 0;
-                    final c = int.tryParse(caloriesCtrl.text.trim()) ?? 0;
-                    final w = int.tryParse(waterCtrl.text.trim()) ?? 0;
-
-                    if (s <= 0 || c <= 0 || w <= 0) {
-                      setDialogState(() {
-                        dialogError = 'Each goal must be greater than 0.';
-                      });
-                      return;
-                    }
-
-                    final saved = await controller.updateDailyGoals(
-                      stepsGoal: s,
-                      caloriesGoal: c,
-                      waterGoalMl: w,
-                    );
-
-                    if (dialogContext.mounted) {
-                      if (saved) {
-                        Navigator.of(dialogContext).pop();
-                      } else {
-                        setDialogState(() {
-                          dialogError =
-                              controller.errorMessage ??
-                              'Failed to save goals.';
-                        });
-                      }
-                    }
-                  },
-                  child: const Text('Save'),
-                ),
-              ],
-            );
-          },
-        );
-      },
+      builder: (_) => const EditGoalsDialog(),
     );
-
-    stepsCtrl.dispose();
-    caloriesCtrl.dispose();
-    waterCtrl.dispose();
   }
 }
