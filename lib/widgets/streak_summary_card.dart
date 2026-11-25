@@ -34,11 +34,14 @@ class StreakSummaryCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Text(
-                      'Current Streak',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
+                    const Flexible(
+                      child: Text(
+                        'Current Streak',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     if (onEditGoals != null) ...[
@@ -110,21 +113,25 @@ class StreakSummaryCard extends StatelessWidget {
               shape: BoxShape.circle,
               border: Border.all(color: Colors.grey[300]!),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '$streakDays',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+            padding: const EdgeInsets.all(10),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '$streakDays',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                Text(
-                  streakDays == 1 ? 'day' : 'days',
-                  style: const TextStyle(fontSize: 12),
-                ),
-              ],
+                  Text(
+                    streakDays == 1 ? 'day' : 'days',
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
